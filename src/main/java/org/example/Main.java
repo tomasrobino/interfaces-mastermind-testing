@@ -23,8 +23,6 @@ public class Main {
         MasterMindLogic logic = new MasterMindLogic(palette, secretLength, labels);
 
         // Create UI
-        SwingUtilities.invokeLater(() -> {
-            new MasterMindUI(palette, labels, rounds, logic);
-        });
+        SwingUtilities.invokeLater(() -> new MasterMindUI(palette, labels, rounds, logic));
     }
 }
