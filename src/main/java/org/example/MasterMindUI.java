@@ -1,6 +1,7 @@
+package org.example;
+
 import java.awt.*;
 import javax.swing.*;
-import java.util.List;
 import java.util.ArrayList;
 
 public class MasterMindUI {
@@ -231,11 +232,11 @@ public class MasterMindUI {
         return bottomPanel;
     }
 
-    // Main UI
+    // org.example.Main UI
     public MasterMindUI(Color[] colors, String[] labels, int rounds, MasterMindLogic logic) {
         this.LOGIC = logic;
 
-        // Main frame
+        // org.example.Main frame
         JFrame frame = new JFrame("MasterMind");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
