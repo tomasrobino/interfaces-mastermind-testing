@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MasterMindLogic {
-
     private final Color[] SECRET;
     private final Color[] PALETTE;
     private final String[] LABELS;
@@ -83,5 +82,7 @@ public class MasterMindLogic {
         return result.toString();
     }
 
-
+    public Color[] getSECRET() {
+        return SECRET;
+    }
 }
