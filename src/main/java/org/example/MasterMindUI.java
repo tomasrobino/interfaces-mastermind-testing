@@ -12,7 +12,7 @@ public class MasterMindUI {
     private static final int BUTTON_SIZE = 50;
     // Colors
     private static final Color BG_COLOR = new Color(141, 69, 220);
-    private static final Color BASE_COLOR = new Color(187, 183, 172);
+    public static final Color BASE_COLOR = new Color(187, 183, 172);
     private Color selectedColor = null;
     // Game logic
     private MasterMindLogic LOGIC;
@@ -250,5 +250,18 @@ public class MasterMindUI {
     public MasterMindUI(Color[] colors, String[] labels, int rounds, MasterMindLogic logic) {
         initialize(colors, labels, rounds, logic);
         createAndShowFrame();
+    }
+
+
+    public void setColors(Color[] colors) {
+        this.colors = colors;
+    }
+
+    public void setLabels(String[] labels) {
+        this.labels = labels;
+    }
+
+    public void setLOGIC(MasterMindLogic LOGIC) {
+        this.LOGIC = LOGIC;
     }
 }

@@ -11,7 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
+import static org.example.MasterMindUI.BASE_COLOR;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -493,7 +495,101 @@ class MasterMindUITest {
         assertEquals(Color.RED, slot.getColor());
     }
 
+    @Test
+    void testCheckButtonClickWithIncompleteFill() throws Exception {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+        
+        // Create a guess panel to populate guessRows
+        spiedUi.createGuessPanel();
 
+        // Create bottom panel to get the check button
+        JPanel bottomPanel = spiedUi.createBottomPanel(colors, labels);
+
+        // Get the check button from control panel
+        BorderLayout layout = (BorderLayout) bottomPanel.getLayout();
+        JPanel controlPanel = (JPanel) layout.getLayoutComponent(BorderLayout.EAST);
+        JButton checkBtn = (JButton) controlPanel.getComponent(0);
+
+        // Get guessRows - all slots should still be BASE_COLOR
+        @SuppressWarnings("unchecked")
+        ArrayList<Circle[]> guessRows = (ArrayList<Circle[]>) getPrivateField(spiedUi, "guessRows");
+        Circle[] currentGuess = guessRows.getFirst();
+
+        // Verify all are BASE_COLOR
+        for (Circle slot : currentGuess) {
+            assertEquals(BASE_COLOR, slot.getColor());
+        }
+
+        // Click the check button
+        for (var listener : checkBtn.getActionListeners()) {
+            listener.actionPerformed(new ActionEvent(checkBtn, ActionEvent.ACTION_PERFORMED, null));
+        }
+
+        // Should have called dialog with warning message
+        verify(spiedUi).dialog("Please fill all slots before checking!");
+    }
+
+    @Test
+    void testCheckButtonClickWithAllFilled() throws Exception {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+        
+        // Mock the checkGuess result
+        MasterMindLogic.Result mockResult = new MasterMindLogic.Result(2, 1);
+        when(mockLogic.checkGuess(any(Color[].class))).thenReturn(mockResult);
+
+        // Create panels
+        spiedUi.createPinPanel();  // Create pin panel first
+        spiedUi.createGuessPanel(); // Create guess panel
+
+        JPanel bottomPanel = spiedUi.createBottomPanel(colors, labels);
+
+        // Get guessRows and fill all slots with colors
+        @SuppressWarnings("unchecked")
+        ArrayList<Circle[]> guessRows = (ArrayList<Circle[]>) getPrivateField(spiedUi, "guessRows");
+        Circle[] currentGuess = guessRows.getFirst();
+
+        currentGuess[0].setCircleColor(Color.RED);
+        currentGuess[1].setCircleColor(Color.GREEN);
+        currentGuess[2].setCircleColor(Color.BLUE);
+        currentGuess[3].setCircleColor(Color.YELLOW);
+
+        // Get the check button
+        BorderLayout layout = (BorderLayout) bottomPanel.getLayout();
+        JPanel controlPanel = (JPanel) layout.getLayoutComponent(BorderLayout.EAST);
+        JButton checkBtn = (JButton) controlPanel.getComponent(0);
+
+        // Get initial currentRow value
+        int initialRow = (int) getPrivateField(spiedUi, "currentRow");
+
+        // Click the check button
+        for (var listener : checkBtn.getActionListeners()) {
+            listener.actionPerformed(new ActionEvent(checkBtn, ActionEvent.ACTION_PERFORMED, null));
+        }
+
+        // Verify checkGuess was called
+        verify(mockLogic).checkGuess(any(Color[].class));
+
+        // Verify currentRow was incremented
+        int newRow = (int) getPrivateField(spiedUi, "currentRow");
+        assertEquals(initialRow + 1, newRow);
+
+        // Verify dialog was NOT called for incomplete message
+        verify(spiedUi, never()).dialog("Please fill all slots before checking!");
+    }
+
+    @Test
+    void testCreateAndShowFrameException() {
+        MasterMindUI newUi = new MasterMindUI();
+        assertThrows(IllegalStateException.class, newUi::createAndShowFrame);
+        newUi.setColors(new Color[4]);
+        assertThrows(IllegalStateException.class, newUi::createAndShowFrame);
+        newUi.setLabels(new String[4]);
+        assertThrows(IllegalStateException.class, newUi::createAndShowFrame);
+    }
 
     /*
     This opens the dialog but would be the only way to test this method
