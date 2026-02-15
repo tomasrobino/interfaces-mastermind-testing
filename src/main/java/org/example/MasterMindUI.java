@@ -264,4 +264,16 @@ public class MasterMindUI {
     public void setLOGIC(MasterMindLogic LOGIC) {
         this.LOGIC = LOGIC;
     }
+
+    public Color[] getColors() {
+        return colors;
+    }
+
+    public String[] getLabels() {
+        return labels;
+    }
+
+    public MasterMindLogic getLOGIC() {
+        return LOGIC;
+    }
 }

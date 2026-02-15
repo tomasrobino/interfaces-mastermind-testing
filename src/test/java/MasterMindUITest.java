@@ -465,12 +465,15 @@ class MasterMindUITest {
         assertEquals(Color.BLACK, pins[2].getColor());
         assertEquals(Color.WHITE, pins[3].getColor());
     }
-
+    /*
+    This opens the panel but would be the only way to test this constructor
     @Test
     void testUIConstructorWithArguments() {
         MasterMindUI tui = new MasterMindUI(colors, labels, rounds, mockLogic);
         assertNotNull(tui);
     }
+
+     */
 
     @Test
     void testGuessSlotClickWhenCurrentRowAndColorSelected() throws Exception {
@@ -599,4 +602,23 @@ class MasterMindUITest {
     }
 
      */
+
+    @Test
+    void testSetColors() {
+        ui.setColors(new Color[]{Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW});
+        assertEquals(4, ui.getColors().length);
+    }
+
+    @Test
+    void testSetLabels() {
+        ui.setLabels(new String[]{"R", "B", "G", "Y"});
+        assertEquals(4, ui.getLabels().length);
+    }
+
+    @Test
+    void testSetLogic() {
+        MasterMindLogic mockLogicLocal = mock(MasterMindLogic.class);
+        ui.setLOGIC(mockLogicLocal);
+        assertEquals(mockLogicLocal, ui.getLOGIC());
+    }
 }
