@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MasterMindUITest {
@@ -148,13 +149,17 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithMixedResults() {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(2, 1);
-        ui.colorPins(pins, result);
+        spiedUi.colorPins(pins, result);
 
         // First 2 should be black, next 1 white, last stays base
         assertEquals(Color.BLACK, pins[0].getColor());
@@ -165,13 +170,17 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithOnlyWhites() {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(0, 3);
-        ui.colorPins(pins, result);
+        spiedUi.colorPins(pins, result);
 
         assertEquals(Color.WHITE, pins[0].getColor());
         assertEquals(Color.WHITE, pins[1].getColor());
@@ -181,6 +190,10 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithNoCorrect() {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+
         Circle[] pins = new Circle[4];
         Color baseColor = new Color(187, 183, 172);
         for (int i = 0; i < 4; i++) {
@@ -188,7 +201,7 @@ class MasterMindUITest {
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(0, 0);
-        ui.colorPins(pins, result);
+        spiedUi.colorPins(pins, result);
 
         // All should remain base color
         for (Circle pin : pins) {
@@ -389,6 +402,10 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsBlackPriority() {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
@@ -396,7 +413,7 @@ class MasterMindUITest {
 
         // Blacks should be assigned before whites
         MasterMindLogic.Result result = new MasterMindLogic.Result(1, 2);
-        ui.colorPins(pins, result);
+        spiedUi.colorPins(pins, result);
 
         assertEquals(Color.BLACK, pins[0].getColor());
         assertEquals(Color.WHITE, pins[1].getColor());
@@ -411,6 +428,10 @@ class MasterMindUITest {
 
     @Test
     void testUIWithMockLogicCheckGuess() {
+        MasterMindUI spiedUi = spy(new MasterMindUI());
+        spiedUi.initialize(colors, labels, rounds, mockLogic);
+        doNothing().when(spiedUi).dialog(anyString());
+
         MasterMindLogic.Result mockResult = new MasterMindLogic.Result(3, 1);
 
         Circle[] pins = new Circle[4];
@@ -418,7 +439,7 @@ class MasterMindUITest {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
-        ui.colorPins(pins, mockResult);
+        spiedUi.colorPins(pins, mockResult);
 
         // Verify 3 blacks and 1 white
         assertEquals(Color.BLACK, pins[0].getColor());

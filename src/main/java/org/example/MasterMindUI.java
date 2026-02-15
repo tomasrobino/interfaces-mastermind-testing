@@ -34,6 +34,10 @@ public class MasterMindUI {
     public MasterMindUI() {
     }
 
+    public void dialog(String message) {
+        JOptionPane.showMessageDialog(null, message);
+    }
+
     // ----- Helper functions -----
     // Create styled JButton
     public JButton createStyledButton(String text, Color bg, int size) {
@@ -115,13 +119,13 @@ public class MasterMindUI {
         int whites = result.whites;
 
         if (blacks == 4) {
-            JOptionPane.showMessageDialog(null, "You guessed it!");
+            dialog("You guessed it!");
             return;
         } else {
-            JOptionPane.showMessageDialog(null, "Black: " + blacks + ". White: " + whites);
+            dialog("Black: " + blacks + ". White: " + whites);
         }
         if (currentRow == 9) {
-            JOptionPane.showMessageDialog(null, "You lost, the answer was: " + LOGIC.showSecret());
+            dialog("You lost, the answer was: " + LOGIC.showSecret());
         }
         for (int i = 0; i < 4; i++) {
             if (blacks > 0) {
@@ -172,7 +176,7 @@ public class MasterMindUI {
                 currentRow++;
             } else {
                 // Show warning that row is incomplete
-                JOptionPane.showMessageDialog(null, "Please fill all slots before checking!");
+                dialog("Please fill all slots before checking!");
             }
         });
 
