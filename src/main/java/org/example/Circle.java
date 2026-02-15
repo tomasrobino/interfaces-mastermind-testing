@@ -18,9 +18,9 @@ public class Circle extends JButton {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    public void paintComponent(Graphics g) {
         g.setColor(color);
-        g.fillOval(0, 0, diameter, diameter); // use diameter instead of getWidth()/getHeight() if you want consistent circles
+        g.fillOval(0, 0, diameter, diameter);
         super.paintComponent(g);
     }
 
