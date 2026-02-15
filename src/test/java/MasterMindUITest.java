@@ -9,6 +9,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,6 +43,20 @@ class MasterMindUITest {
         // Create UI and initialize without showing frame
         ui = new MasterMindUI();
         ui.initialize(colors, labels, rounds, mockLogic);
+    }
+
+    // Helper method to get private field value using reflection
+    private Object getPrivateField(Object obj, String fieldName) throws Exception {
+        Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field.get(obj);
+    }
+
+    // Helper method to set private field value using reflection
+    private void setPrivateField(Object obj, String fieldName, Object value) throws Exception {
+        Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(obj, value);
     }
 
     @Test
@@ -453,4 +469,38 @@ class MasterMindUITest {
         MasterMindUI tui = new MasterMindUI(colors, labels, rounds, mockLogic);
         assertNotNull(tui);
     }
+
+    @Test
+    void testGuessSlotClickWhenCurrentRowAndColorSelected() throws Exception {
+        // Set a selected color
+        setPrivateField(ui, "selectedColor", Color.RED);
+
+        // Create the first guess panel (row 0)
+        JPanel guessPanel = ui.createGuessPanel();
+
+        // Get the first circle slot
+        Circle slot = (Circle) guessPanel.getComponent(0);
+
+        // Initially should be base color
+        assertEquals(new Color(187, 183, 172), slot.getColor());
+
+        // Simulate clicking the slot
+        for (var listener : slot.getActionListeners()) {
+            listener.actionPerformed(new ActionEvent(slot, ActionEvent.ACTION_PERFORMED, null));
+        }
+
+        // Should now be RED since it's the current row (0) and color is selected
+        assertEquals(Color.RED, slot.getColor());
+    }
+
+
+
+    /*
+    This opens the dialog but would be the only way to test this method
+    @Test
+    void testDialog() {
+        ui.dialog("Test");
+    }
+
+     */
 }
