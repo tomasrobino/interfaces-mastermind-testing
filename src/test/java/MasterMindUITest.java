@@ -447,4 +447,10 @@ class MasterMindUITest {
         assertEquals(Color.BLACK, pins[2].getColor());
         assertEquals(Color.WHITE, pins[3].getColor());
     }
+
+    @Test
+    void testUIConstructorWithArguments() {
+        MasterMindUI tui = new MasterMindUI(colors, labels, rounds, mockLogic);
+        assertNotNull(tui);
+    }
 }
