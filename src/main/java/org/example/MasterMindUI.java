@@ -15,7 +15,7 @@ public class MasterMindUI {
     private static final Color BASE_COLOR = new Color(187, 183, 172);
     private Color selectedColor = null;
     // Game logic
-    private final MasterMindLogic LOGIC;
+    private MasterMindLogic LOGIC;
 
     // Stores each row of guessed colors (4 circles per row)
     private final ArrayList<Circle[]> guessRows = new ArrayList<>();
@@ -24,6 +24,10 @@ public class MasterMindUI {
     private final ArrayList<Circle[]> pinRows = new ArrayList<>();
 
     private int currentRow = 0;
+
+    public MasterMindUI() {
+
+    }
 
     // ----- Helper functions -----
     // Create styled JButton
