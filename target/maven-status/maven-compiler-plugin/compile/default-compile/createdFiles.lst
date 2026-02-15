@@ -1,5 +1,5 @@
 org\example\MasterMindLogic$Result.class
 org\example\MasterMindLogic.class
 org\example\Main.class
-org\example\MasterMindUI$Circle.class
+org\example\Circle.class
 org\example\MasterMindUI.class
