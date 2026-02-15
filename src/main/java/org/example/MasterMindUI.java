@@ -25,8 +25,13 @@ public class MasterMindUI {
 
     private int currentRow = 0;
 
-    public MasterMindUI() {
+    // Store constructor parameters for later use
+    private Color[] colors;
+    private String[] labels;
+    private int rounds;
 
+    // Default constructor (for testing)
+    public MasterMindUI() {
     }
 
     // ----- Helper functions -----
@@ -198,27 +203,48 @@ public class MasterMindUI {
         return bottomPanel;
     }
 
-    // org.example.Main UI
-    public MasterMindUI(Color[] colors, String[] labels, int rounds, MasterMindLogic logic) {
+    // Initialize without creating frame (for testing)
+    public void initialize(Color[] colors, String[] labels, int rounds, MasterMindLogic logic) {
         this.LOGIC = logic;
+        this.colors = colors;
+        this.labels = labels;
+        this.rounds = rounds;
+    }
 
-        // org.example.Main frame
+    // Create and show the frame (separated from initialization)
+    public JFrame createAndShowFrame() {
+        if (colors == null || labels == null || LOGIC == null) {
+            throw new IllegalStateException("Must call initialize() before createAndShowFrame()");
+        }
+
+        // Main frame
         JFrame frame = new JFrame("MasterMind");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+
         // Frame with rounds
         JPanel centerPanel = new JPanel();
         centerPanel.setBackground(BG_COLOR);
         centerPanel.setLayout(new GridLayout(rounds, 1, 0, 0));
+
         // Creating rounds
         for (int i = 0; i < rounds; i++) {
             centerPanel.add(createRoundRow());
         }
         frame.add(centerPanel, BorderLayout.CENTER);
+
         // Creating panel with buttons
         frame.add(createBottomPanel(colors, labels), BorderLayout.SOUTH);
 
         frame.pack();
         frame.setVisible(true);
+
+        return frame;
+    }
+
+    // Main UI constructor - calls both initialize and createAndShowFrame
+    public MasterMindUI(Color[] colors, String[] labels, int rounds, MasterMindLogic logic) {
+        initialize(colors, labels, rounds, logic);
+        createAndShowFrame();
     }
 }

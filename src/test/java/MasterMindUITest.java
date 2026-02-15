@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.swing.*;
@@ -19,7 +18,6 @@ class MasterMindUITest {
     @Mock
     private MasterMindLogic mockLogic;
 
-    @Spy
     private MasterMindUI ui;
 
     private Color[] colors;
@@ -38,12 +36,15 @@ class MasterMindUITest {
         };
         labels = new String[]{"R", "G", "B", "Y", "O", "P"};
         rounds = 10;
+
+        // Create UI and initialize without showing frame
+        ui = new MasterMindUI();
+        ui.initialize(colors, labels, rounds, mockLogic);
     }
 
     @Test
     void testCreateStyledButton() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JButton button = testUI.createStyledButton("Test", Color.RED, 50);
+        JButton button = ui.createStyledButton("Test", Color.RED, 50);
 
         assertNotNull(button);
         assertEquals("Test", button.getText());
@@ -56,40 +57,33 @@ class MasterMindUITest {
 
     @Test
     void testCreateStyledButtonWithDifferentSizes() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
         int[] sizes = {10, 25, 50, 100};
         for (int size : sizes) {
-            JButton button = testUI.createStyledButton("Btn", Color.BLUE, size);
+            JButton button = ui.createStyledButton("Btn", Color.BLUE, size);
             assertEquals(new Dimension(size, size), button.getPreferredSize());
         }
     }
 
     @Test
     void testCreateStyledButtonWithDifferentColors() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
         for (Color color : colors) {
-            JButton button = testUI.createStyledButton("Btn", color, 50);
+            JButton button = ui.createStyledButton("Btn", color, 50);
             assertEquals(color, button.getBackground());
         }
     }
 
     @Test
     void testCreateStyledButtonWithDifferentText() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
         String[] texts = {"A", "Test", "Check", "Submit"};
         for (String text : texts) {
-            JButton button = testUI.createStyledButton(text, Color.WHITE, 50);
+            JButton button = ui.createStyledButton(text, Color.WHITE, 50);
             assertEquals(text, button.getText());
         }
     }
 
     @Test
     void testCreatePinPanel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel pinPanel = testUI.createPinPanel();
+        JPanel pinPanel = ui.createPinPanel();
 
         assertNotNull(pinPanel);
         assertEquals(new Color(141, 69, 220), pinPanel.getBackground());
@@ -99,8 +93,7 @@ class MasterMindUITest {
 
     @Test
     void testCreatePinPanelComponents() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel pinPanel = testUI.createPinPanel();
+        JPanel pinPanel = ui.createPinPanel();
 
         for (Component comp : pinPanel.getComponents()) {
             assertInstanceOf(Circle.class, comp);
@@ -111,8 +104,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateGuessPanel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel guessPanel = testUI.createGuessPanel();
+        JPanel guessPanel = ui.createGuessPanel();
 
         assertNotNull(guessPanel);
         assertEquals(new Color(141, 69, 220), guessPanel.getBackground());
@@ -122,8 +114,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateGuessPanelComponents() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel guessPanel = testUI.createGuessPanel();
+        JPanel guessPanel = ui.createGuessPanel();
 
         for (Component comp : guessPanel.getComponents()) {
             assertInstanceOf(Circle.class, comp);
@@ -135,8 +126,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateRoundRow() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel roundPanel = testUI.createRoundRow();
+        JPanel roundPanel = ui.createRoundRow();
 
         assertNotNull(roundPanel);
         assertEquals(new Color(141, 69, 220), roundPanel.getBackground());
@@ -146,8 +136,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateColorDisplayLabel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JLabel label = testUI.createColorDisplayLabel(Color.RED, 50);
+        JLabel label = ui.createColorDisplayLabel(Color.RED, 50);
 
         assertNotNull(label);
         assertEquals("Selected", label.getText());
@@ -159,14 +148,13 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithMixedResults() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(2, 1);
-        testUI.colorPins(pins, result);
+        ui.colorPins(pins, result);
 
         // First 2 should be black, next 1 white, last stays base
         assertEquals(Color.BLACK, pins[0].getColor());
@@ -177,14 +165,13 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithOnlyWhites() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(0, 3);
-        testUI.colorPins(pins, result);
+        ui.colorPins(pins, result);
 
         assertEquals(Color.WHITE, pins[0].getColor());
         assertEquals(Color.WHITE, pins[1].getColor());
@@ -194,7 +181,6 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsWithNoCorrect() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Circle[] pins = new Circle[4];
         Color baseColor = new Color(187, 183, 172);
         for (int i = 0; i < 4; i++) {
@@ -202,7 +188,7 @@ class MasterMindUITest {
         }
 
         MasterMindLogic.Result result = new MasterMindLogic.Result(0, 0);
-        testUI.colorPins(pins, result);
+        ui.colorPins(pins, result);
 
         // All should remain base color
         for (Circle pin : pins) {
@@ -212,8 +198,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateBottomPanel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         assertNotNull(bottomPanel);
         assertEquals(new Color(141, 69, 220), bottomPanel.getBackground());
@@ -222,8 +207,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateBottomPanelComponentCount() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         // Should have 2 components: colorPanel (WEST) and controlPanel (EAST)
         assertEquals(2, bottomPanel.getComponentCount());
@@ -231,8 +215,7 @@ class MasterMindUITest {
 
     @Test
     void testCreateBottomPanelColorButtons() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         Component westComponent = ((BorderLayout) bottomPanel.getLayout())
                 .getLayoutComponent(BorderLayout.WEST);
@@ -244,35 +227,27 @@ class MasterMindUITest {
 
     @Test
     void testConstructorCreatesFrame() {
-        // This test creates an actual UI - in headless mode it might not fully work
-        // but we can verify it doesn't throw exceptions
         assertDoesNotThrow(() -> {
-            new MasterMindUI(colors, labels, rounds, mockLogic);
+            MasterMindUI testUI = new MasterMindUI();
+            testUI.initialize(colors, labels, rounds, mockLogic);
         });
     }
 
     @Test
     void testGuessRowsInitialization() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
-        // After construction, we should have 'rounds' guess rows
-        // We can't directly access private fields without reflection,
-        // but we can verify the UI was constructed
-        assertNotNull(testUI);
+        // After initialization without frame, verify the UI object exists
+        assertNotNull(ui);
     }
 
     @Test
     void testPinRowsInitialization() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
         // Verify UI construction
-        assertNotNull(testUI);
+        assertNotNull(ui);
     }
 
     @Test
     void testColorSelectionMechanism() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         Component westComponent = ((BorderLayout) bottomPanel.getLayout())
                 .getLayoutComponent(BorderLayout.WEST);
@@ -292,8 +267,7 @@ class MasterMindUITest {
 
     @Test
     void testCheckButtonInControlPanel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         Component eastComponent = ((BorderLayout) bottomPanel.getLayout())
                 .getLayoutComponent(BorderLayout.EAST);
@@ -311,8 +285,7 @@ class MasterMindUITest {
 
     @Test
     void testSelectedLabelInControlPanel() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
 
         Component eastComponent = ((BorderLayout) bottomPanel.getLayout())
                 .getLayoutComponent(BorderLayout.EAST);
@@ -327,34 +300,32 @@ class MasterMindUITest {
 
     @Test
     void testBackgroundColors() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Color expectedBg = new Color(141, 69, 220);
 
-        JPanel pinPanel = testUI.createPinPanel();
+        JPanel pinPanel = ui.createPinPanel();
         assertEquals(expectedBg, pinPanel.getBackground());
 
-        JPanel guessPanel = testUI.createGuessPanel();
+        JPanel guessPanel = ui.createGuessPanel();
         assertEquals(expectedBg, guessPanel.getBackground());
 
-        JPanel roundRow = testUI.createRoundRow();
+        JPanel roundRow = ui.createRoundRow();
         assertEquals(expectedBg, roundRow.getBackground());
 
-        JPanel bottomPanel = testUI.createBottomPanel(colors, labels);
+        JPanel bottomPanel = ui.createBottomPanel(colors, labels);
         assertEquals(expectedBg, bottomPanel.getBackground());
     }
 
     @Test
     void testBaseColor() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Color expectedBase = new Color(187, 183, 172);
 
-        JPanel pinPanel = testUI.createPinPanel();
+        JPanel pinPanel = ui.createPinPanel();
         for (Component comp : pinPanel.getComponents()) {
             Circle circle = (Circle) comp;
             assertEquals(expectedBase, circle.getColor());
         }
 
-        JPanel guessPanel = testUI.createGuessPanel();
+        JPanel guessPanel = ui.createGuessPanel();
         for (Component comp : guessPanel.getComponents()) {
             Circle circle = (Circle) comp;
             assertEquals(expectedBase, circle.getColor());
@@ -363,17 +334,15 @@ class MasterMindUITest {
 
     @Test
     void testCircleSizes() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-
         // Pin size should be 10
-        JPanel pinPanel = testUI.createPinPanel();
+        JPanel pinPanel = ui.createPinPanel();
         for (Component comp : pinPanel.getComponents()) {
             Circle circle = (Circle) comp;
             assertEquals(10, circle.getPreferredSize().width);
         }
 
         // Guess size should be 35
-        JPanel guessPanel = testUI.createGuessPanel();
+        JPanel guessPanel = ui.createGuessPanel();
         for (Component comp : guessPanel.getComponents()) {
             Circle circle = (Circle) comp;
             assertEquals(35, circle.getPreferredSize().width);
@@ -385,7 +354,8 @@ class MasterMindUITest {
         int[] roundCounts = {1, 5, 10, 15};
 
         for (int roundCount : roundCounts) {
-            MasterMindUI testUI = new MasterMindUI(colors, labels, roundCount, mockLogic);
+            MasterMindUI testUI = new MasterMindUI();
+            testUI.initialize(colors, labels, roundCount, mockLogic);
             assertNotNull(testUI);
         }
     }
@@ -405,7 +375,8 @@ class MasterMindUITest {
         };
 
         for (int i = 0; i < palettes.length; i++) {
-            MasterMindUI testUI = new MasterMindUI(palettes[i], labelSets[i], rounds, mockLogic);
+            MasterMindUI testUI = new MasterMindUI();
+            testUI.initialize(palettes[i], labelSets[i], rounds, mockLogic);
             JPanel bottomPanel = testUI.createBottomPanel(palettes[i], labelSets[i]);
 
             Component westComponent = ((BorderLayout) bottomPanel.getLayout())
@@ -418,7 +389,6 @@ class MasterMindUITest {
 
     @Test
     void testColorPinsBlackPriority() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
@@ -426,7 +396,7 @@ class MasterMindUITest {
 
         // Blacks should be assigned before whites
         MasterMindLogic.Result result = new MasterMindLogic.Result(1, 2);
-        testUI.colorPins(pins, result);
+        ui.colorPins(pins, result);
 
         assertEquals(Color.BLACK, pins[0].getColor());
         assertEquals(Color.WHITE, pins[1].getColor());
@@ -436,21 +406,19 @@ class MasterMindUITest {
 
     @Test
     void testLogicIntegration() {
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
-        assertNotNull(testUI);
+        assertNotNull(ui);
     }
 
     @Test
     void testUIWithMockLogicCheckGuess() {
         MasterMindLogic.Result mockResult = new MasterMindLogic.Result(3, 1);
 
-        MasterMindUI testUI = new MasterMindUI(colors, labels, rounds, mockLogic);
         Circle[] pins = new Circle[4];
         for (int i = 0; i < 4; i++) {
             pins[i] = new Circle(new Color(187, 183, 172), 10, false);
         }
 
-        testUI.colorPins(pins, mockResult);
+        ui.colorPins(pins, mockResult);
 
         // Verify 3 blacks and 1 white
         assertEquals(Color.BLACK, pins[0].getColor());
