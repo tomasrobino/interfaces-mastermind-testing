@@ -2,7 +2,6 @@
 import org.example.Circle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Spy;
 
 import javax.swing.*;
@@ -19,9 +18,6 @@ class CircleTest {
 
     @Spy
     private Circle nonClickableCircle;
-
-    @Mock
-    private Graphics graphicsMock;
 
     private Color testColor;
     private int testDiameter;
